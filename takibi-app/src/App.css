@@ -1,6 +1,6 @@
 /* ============================================
-   Takibi App - グローバルスタイル
-   夜のテーマ / 暖色パレット / モバイルファースト
+   Takibi App - Ember Glow Design System
+   Warm / Handcrafted / Organic
    ============================================ */
 
 /* ---------- リセット & ベース ---------- */
@@ -13,27 +13,35 @@
 }
 
 :root {
-  /* カラーパレット */
-  --color-night-deepest: #060614;
-  --color-night-deep: #0a0a1e;
-  --color-night-mid: #0f0f2e;
-  --color-fire-core: #fff9c4;
-  --color-fire-bright: #ffd54f;
-  --color-fire-mid: #ff8f00;
-  --color-fire-warm: #e64a19;
-  --color-fire-deep: #bf360c;
-  --color-text-warm: rgba(255, 220, 170, 0.9);
-  --color-text-dim: rgba(255, 200, 140, 0.55);
-  --color-glow-orange: rgba(255, 143, 0, 0.22);
+  /* パレット */
+  --ember-white: #FFF5E6;
+  --ember-cream: #FFECD2;
+  --ember-gold: #FFD54F;
+  --ember-amber: #FF8F00;
+  --ember-orange: #E64A19;
+  --ember-deep: #BF360C;
+  --ember-coal: #1A0800;
 
-  /* タイポグラフィ */
-  --font-jp: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
+  --night-void: #050510;
+  --night-deep: #08081A;
+  --night-blue: #0C1228;
+  --night-warm: #0D0600;
+
+  --glass-warm: rgba(30, 15, 5, 0.65);
+  --glass-border: rgba(255, 143, 0, 0.18);
+  --glass-border-focus: rgba(255, 180, 60, 0.45);
+
+  /* フォント */
+  --font-jp: 'Zen Maru Gothic', 'Hiragino Kaku Gothic ProN', sans-serif;
   --font-en: 'Outfit', sans-serif;
+  --font-display: 'DM Serif Display', serif;
 
-  /* サイズ */
-  --app-max-w: 430px;
+  /* 共通 */
   --app-h: 100dvh;
   --radius-pill: 999px;
+  --radius-card: 18px;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 html,
@@ -42,7 +50,7 @@ body,
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: var(--color-night-deepest);
+  background: var(--night-void);
   font-family: var(--font-jp);
   -webkit-font-smoothing: antialiased;
 }
@@ -52,36 +60,49 @@ body,
   position: relative;
   width: 100%;
   height: var(--app-h);
-  /* max-width なし → PC でも全画面に広がる */
   overflow: hidden;
-  background: linear-gradient(180deg,
-      #0a1628 0%,
-      /* 深い夜の青（上空） */
-      #0d1a35 12%,
-      /* 夜の青 */
-      #100e2e 28%,
-      /* 青紫への移行 */
-      #0f0a28 45%,
-      /* 紫みの暗さ */
-      #130a10 65%,
-      /* 暗い紫 */
-      #150a00 84%,
-      /* 地面付近の暗い茶 */
-      #0d0600 100%
-      /* 地面 */
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 58%, rgba(255, 100, 0, 0.06) 0%, transparent 100%),
+    linear-gradient(180deg,
+      #070E1F 0%,
+      #0A1430 10%,
+      #0D1035 25%,
+      #100A2A 40%,
+      #120810 58%,
+      #140800 78%,
+      #0A0400 100%
     );
 }
 
+/* ノイズテクスチャオーバーレイ */
+.app-root::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 128px 128px;
+  pointer-events: none;
+}
+
+/* ビネット */
+.app-root::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(ellipse 70% 60% at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.4) 100%);
+  pointer-events: none;
+}
 
 /* ---------- SVGキャンバス ---------- */
-/* スマホ: 全画面 / PC: 中央にスマホ幅で配置し、両脇は夜空が素通し */
 .scene-canvas {
   position: absolute;
   top: 0;
   left: 50%;
   transform: translateX(-50%);
   height: 100%;
-  /* PC時の最大幅を制限してスマホ比率を維持 */
   width: min(100%, 480px);
   z-index: 1;
 }
@@ -94,34 +115,30 @@ body,
   pointer-events: none;
 }
 
-/* ベースの星 (小さい白い点 + 淡いグロー) */
 .star {
   position: absolute;
   border-radius: 50%;
-  background: #ffffff;
+  background: #fff;
   box-shadow:
-    0 0 2px 1px rgba(255, 255, 255, 0.95),
-    0 0 6px 2px rgba(255, 255, 255, 0.4),
-    0 0 12px 3px rgba(200, 220, 255, 0.15);
+    0 0 2px 1px rgba(255, 255, 255, 0.9),
+    0 0 6px 2px rgba(220, 230, 255, 0.35),
+    0 0 14px 3px rgba(200, 215, 255, 0.1);
   animation: twinkle ease-in-out infinite;
 }
 
-/* 明るい星 (強いグロー + 十字光条) */
 .star.bright {
-  background: #ffffff;
   box-shadow:
     0 0 3px 2px rgba(255, 255, 255, 1),
-    0 0 10px 4px rgba(255, 255, 255, 0.7),
-    0 0 22px 6px rgba(200, 220, 255, 0.35),
-    0 0 40px 8px rgba(180, 200, 255, 0.15);
+    0 0 8px 3px rgba(255, 255, 255, 0.65),
+    0 0 20px 5px rgba(200, 215, 255, 0.3),
+    0 0 36px 8px rgba(180, 200, 255, 0.1);
 }
 
-/* 十字光条（明るい星の前後に細い線を張る） */
 .star.bright::before,
 .star.bright::after {
   content: '';
   position: absolute;
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.55);
   border-radius: 2px;
   top: 50%;
   left: 50%;
@@ -129,38 +146,31 @@ body,
   animation: inherit;
 }
 
-/* 縦線 */
 .star.bright::before {
   width: 1px;
-  height: 10px;
+  height: 12px;
 }
 
-/* 横線 */
 .star.bright::after {
-  width: 10px;
+  width: 12px;
   height: 1px;
 }
 
 @keyframes twinkle {
-
-  0%,
-  100% {
-    opacity: 0.08;
+  0%, 100% {
+    opacity: 0.06;
     transform: scale(0.7);
   }
-
   45% {
-    opacity: 0.7;
+    opacity: 0.65;
     transform: scale(1.0);
   }
-
   50% {
     opacity: 1;
-    transform: scale(1.25);
+    transform: scale(1.2);
   }
-
   55% {
-    opacity: 0.7;
+    opacity: 0.65;
     transform: scale(1.0);
   }
 }
@@ -168,86 +178,76 @@ body,
 /* ---------- オンラインカウンター ---------- */
 .online-counter {
   position: absolute;
-  top: 16px;
+  top: env(safe-area-inset-top, 12px);
   right: 16px;
+  margin-top: 12px;
   z-index: 10;
   display: flex;
   align-items: center;
-  gap: 5px;
-  background: rgba(10, 5, 0, 0.65);
-  border: 1px solid rgba(255, 143, 0, 0.3);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  gap: 6px;
+  background: var(--glass-warm);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
   border-radius: var(--radius-pill);
-  padding: 6px 14px 6px 10px;
-  transition: transform 0.2s ease;
+  padding: 7px 14px 7px 10px;
+  transition: transform 0.2s var(--ease-spring);
 }
 
 .online-counter.bump {
-  animation: bump 0.4s ease;
+  animation: bump 0.45s var(--ease-spring);
 }
 
 @keyframes bump {
-  0% {
-    transform: scale(1);
-  }
-
-  40% {
-    transform: scale(1.15);
-  }
-
-  100% {
-    transform: scale(1);
-  }
+  0% { transform: scale(1); }
+  35% { transform: scale(1.12); }
+  100% { transform: scale(1); }
 }
 
 .counter-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #4caf50;
-  box-shadow: 0 0 6px #4caf50;
-  animation: pulse-dot 2s ease infinite;
+  background: #66BB6A;
+  box-shadow: 0 0 6px rgba(102, 187, 106, 0.8);
+  animation: pulse-dot 2.5s ease infinite;
 }
 
 @keyframes pulse-dot {
-
-  0%,
-  100% {
-    box-shadow: 0 0 4px #4caf50;
+  0%, 100% {
+    box-shadow: 0 0 4px rgba(102, 187, 106, 0.6);
   }
-
   50% {
-    box-shadow: 0 0 10px #4caf50, 0 0 18px rgba(76, 175, 80, 0.4);
+    box-shadow: 0 0 10px rgba(102, 187, 106, 0.9), 0 0 20px rgba(102, 187, 106, 0.3);
   }
 }
 
 .counter-flame-icon {
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1;
+  filter: saturate(1.3);
 }
 
 .counter-number {
   font-family: var(--font-en);
   font-size: 15px;
   font-weight: 600;
-  color: var(--color-fire-bright);
+  color: var(--ember-gold);
   letter-spacing: 0.02em;
 }
 
 .counter-label {
   font-family: var(--font-jp);
   font-size: 10px;
-  font-weight: 300;
-  color: var(--color-text-dim);
-  letter-spacing: 0.03em;
+  font-weight: 500;
+  color: rgba(255, 200, 140, 0.5);
+  letter-spacing: 0.04em;
 }
 
 /* ---------- 下部UI ---------- */
 .bottom-ui {
   position: absolute;
   bottom: 0;
-  /* SVGシーンと同じ中央配置 */
   left: 50%;
   transform: translateX(-50%);
   width: min(100%, 480px);
@@ -255,55 +255,88 @@ body,
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 24px 40px;
+  padding: 0 24px calc(env(safe-area-inset-bottom, 20px) + 24px);
   background: linear-gradient(to top,
-      rgba(6, 6, 20, 0.95) 0%,
-      rgba(6, 6, 20, 0.6) 60%,
-      transparent 100%);
+    rgba(5, 5, 16, 0.97) 0%,
+    rgba(5, 5, 16, 0.7) 50%,
+    transparent 100%);
+  animation: bottom-ui-in 0.8s var(--ease-out-expo) 0.3s both;
+}
 
+@keyframes bottom-ui-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
 /* ---------- 参加ボタン ---------- */
 .join-btn {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
   width: 100%;
   max-width: 300px;
-  padding: 16px 28px;
+  padding: 17px 28px;
   border: none;
   border-radius: var(--radius-pill);
   cursor: pointer;
   font-family: var(--font-jp);
   font-size: 17px;
   font-weight: 700;
-  letter-spacing: 0.06em;
-  color: #1a0800;
-  background: linear-gradient(135deg, #FFD54F 0%, #FF8F00 50%, #E64A19 100%);
+  letter-spacing: 0.08em;
+  color: var(--ember-coal);
+  background: linear-gradient(135deg, #FFE082 0%, #FFB300 40%, #FF8F00 70%, #E65100 100%);
   box-shadow:
-    0 0 20px rgba(255, 143, 0, 0.6),
-    0 6px 30px rgba(255, 100, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+    0 0 24px rgba(255, 143, 0, 0.55),
+    0 8px 32px rgba(255, 87, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.08);
+  transition: transform 0.15s var(--ease-spring), box-shadow 0.15s ease;
   -webkit-tap-highlight-color: transparent;
+  animation: join-pulse 3s ease-in-out infinite;
+}
+
+@keyframes join-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 24px rgba(255, 143, 0, 0.55),
+      0 8px 32px rgba(255, 87, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.35),
+      inset 0 -2px 0 rgba(0, 0, 0, 0.08);
+  }
+  50% {
+    box-shadow:
+      0 0 40px rgba(255, 143, 0, 0.75),
+      0 8px 48px rgba(255, 87, 0, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.35),
+      inset 0 -2px 0 rgba(0, 0, 0, 0.08);
+  }
 }
 
 .join-btn:active {
   transform: scale(0.96);
+  animation: none;
   box-shadow:
-    0 0 12px rgba(255, 143, 0, 0.5),
-    0 3px 18px rgba(255, 100, 0, 0.3);
+    0 0 12px rgba(255, 143, 0, 0.4),
+    0 3px 16px rgba(255, 87, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .join-btn-icon {
   font-size: 22px;
+  filter: saturate(1.5);
 }
 
 .join-btn-text {
   flex: 1;
   text-align: center;
   margin-right: 22px;
-  /* アイコン分の補正 */
 }
 
 /* ---------- 参加済みステータス ---------- */
@@ -311,39 +344,33 @@ body,
   font-family: var(--font-jp);
   font-size: 14px;
   font-weight: 500;
-  color: var(--color-fire-bright);
-  letter-spacing: 0.05em;
-  text-shadow: 0 0 12px rgba(255, 213, 79, 0.5);
-  animation: glow-text 2.5s ease infinite;
+  color: var(--ember-gold);
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 12px rgba(255, 213, 79, 0.4);
+  animation: glow-text 3s ease infinite;
 }
 
 @keyframes glow-text {
-
-  0%,
-  100% {
-    text-shadow: 0 0 8px rgba(255, 213, 79, 0.4);
+  0%, 100% {
+    text-shadow: 0 0 8px rgba(255, 213, 79, 0.35);
   }
-
   50% {
-    text-shadow: 0 0 20px rgba(255, 213, 79, 0.8), 0 0 40px rgba(255, 143, 0, 0.3);
+    text-shadow: 0 0 20px rgba(255, 213, 79, 0.7), 0 0 50px rgba(255, 143, 0, 0.2);
   }
 }
 
-/* ---------- 自分のアバターグロー (SVG内クラス) ---------- */
+/* ---------- 自分のアバターグロー ---------- */
 .self-glow-pulse {
-  animation: self-pulse 2s ease-in-out infinite;
+  animation: self-pulse 2.5s ease-in-out infinite;
 }
 
 @keyframes self-pulse {
-
-  0%,
-  100% {
-    opacity: 0.2;
+  0%, 100% {
+    opacity: 0.18;
     r: 34;
   }
-
   50% {
-    opacity: 0.4;
+    opacity: 0.38;
     r: 38;
   }
 }
@@ -363,14 +390,14 @@ body,
 
 .chat-messages {
   flex: 1;
-  max-height: 220px;
+  max-height: 200px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
   padding: 0 16px 8px;
-  mask-image: linear-gradient(to bottom, transparent 0%, black 25%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 25%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 30%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%);
   pointer-events: auto;
   scrollbar-width: none;
 }
@@ -379,8 +406,8 @@ body,
   display: flex;
   flex-direction: column;
   gap: 2px;
-  max-width: 75%;
-  animation: msg-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+  max-width: 72%;
+  animation: msg-in 0.4s var(--ease-spring) both;
 }
 
 .chat-msg--self {
@@ -390,7 +417,7 @@ body,
 @keyframes msg-in {
   from {
     opacity: 0;
-    transform: translateY(10px) scale(0.95);
+    transform: translateY(12px) scale(0.92);
   }
   to {
     opacity: 1;
@@ -401,30 +428,31 @@ body,
 .chat-msg-name {
   font-family: var(--font-jp);
   font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  padding-left: 10px;
-  opacity: 0.85;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding-left: 12px;
+  opacity: 0.8;
 }
 
 .chat-msg-body {
   font-family: var(--font-jp);
   font-size: 13px;
   font-weight: 400;
-  line-height: 1.5;
-  color: rgba(255, 235, 210, 0.95);
-  background: rgba(45, 20, 5, 0.7);
-  border: 1px solid rgba(255, 143, 0, 0.15);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 14px;
-  padding: 7px 13px;
+  line-height: 1.55;
+  color: var(--ember-cream);
+  background: var(--glass-warm);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  border-radius: 16px 16px 16px 4px;
+  padding: 8px 14px;
   word-break: break-word;
 }
 
 .chat-msg--self .chat-msg-body {
-  background: rgba(255, 120, 0, 0.18);
-  border-color: rgba(255, 180, 80, 0.25);
+  background: rgba(255, 120, 0, 0.14);
+  border-color: rgba(255, 180, 80, 0.2);
+  border-radius: 16px 16px 4px 16px;
 }
 
 /* ---------- チャット入力 ---------- */
@@ -432,89 +460,95 @@ body,
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 16px 36px;
+  padding: 10px 16px calc(env(safe-area-inset-bottom, 16px) + 16px);
   background: linear-gradient(to top,
-    rgba(6, 6, 20, 0.95) 0%,
-    rgba(6, 6, 20, 0.6) 70%,
+    rgba(5, 5, 16, 0.97) 0%,
+    rgba(5, 5, 16, 0.65) 65%,
     transparent 100%);
   pointer-events: auto;
 }
 
 .chat-input {
   flex: 1;
-  height: 40px;
-  padding: 0 16px;
-  border: 1px solid rgba(255, 143, 0, 0.2);
+  height: 42px;
+  padding: 0 18px;
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-pill);
-  background: rgba(25, 12, 4, 0.75);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  color: rgba(255, 230, 200, 0.95);
+  background: rgba(20, 10, 4, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--ember-cream);
   font-family: var(--font-jp);
   font-size: 14px;
+  font-weight: 400;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.25s, box-shadow 0.25s;
 }
 
 .chat-input::placeholder {
-  color: rgba(255, 180, 120, 0.35);
+  color: rgba(255, 180, 120, 0.3);
+  font-weight: 400;
 }
 
 .chat-input:focus {
-  border-color: rgba(255, 160, 40, 0.5);
-  box-shadow: 0 0 16px rgba(255, 120, 0, 0.15);
+  border-color: var(--glass-border-focus);
+  box-shadow: 0 0 20px rgba(255, 120, 0, 0.1), inset 0 0 12px rgba(255, 120, 0, 0.03);
 }
 
 .chat-send-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   flex-shrink: 0;
   border: none;
   border-radius: 50%;
-  background: linear-gradient(135deg, #FF8F00, #E64A19);
-  color: #fff;
+  background: linear-gradient(145deg, var(--ember-amber), var(--ember-orange));
+  color: var(--ember-white);
   cursor: pointer;
-  transition: transform 0.12s, opacity 0.2s;
+  transition: transform 0.12s var(--ease-spring), opacity 0.2s, box-shadow 0.2s;
   -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 2px 12px rgba(255, 100, 0, 0.3);
 }
 
 .chat-send-btn:disabled {
-  opacity: 0.3;
+  opacity: 0.25;
   cursor: default;
+  box-shadow: none;
 }
 
 .chat-send-btn:not(:disabled):active {
-  transform: scale(0.9);
+  transform: scale(0.88);
 }
 
 /* ---------- 設定ボタン (左上) ---------- */
 .settings-btn {
   position: absolute;
-  top: 16px;
+  top: env(safe-area-inset-top, 12px);
   left: 16px;
+  margin-top: 12px;
   z-index: 10;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 38px;
   height: 38px;
-  border: 1px solid rgba(255, 143, 0, 0.25);
+  border: 1px solid var(--glass-border);
   border-radius: 50%;
-  background: rgba(10, 5, 0, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  color: rgba(255, 200, 140, 0.7);
+  background: var(--glass-warm);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  color: rgba(255, 200, 140, 0.6);
   cursor: pointer;
-  transition: color 0.2s, border-color 0.2s;
+  transition: color 0.2s, border-color 0.2s, transform 0.2s var(--ease-spring);
   -webkit-tap-highlight-color: transparent;
 }
 
 .settings-btn:active {
-  color: var(--color-fire-bright);
-  border-color: rgba(255, 180, 60, 0.5);
+  color: var(--ember-gold);
+  border-color: var(--glass-border-focus);
+  transform: scale(0.92) rotate(-15deg);
 }
 
 /* ---------- 設定パネル ---------- */
@@ -525,10 +559,10 @@ body,
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  animation: settings-fade-in 0.25s ease both;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: settings-fade-in 0.3s ease both;
 }
 
 @keyframes settings-fade-in {
@@ -537,24 +571,26 @@ body,
 }
 
 .settings-panel {
-  width: min(340px, calc(100% - 40px));
-  max-height: calc(100dvh - 80px);
+  width: min(360px, calc(100% - 32px));
+  max-height: calc(100dvh - 60px);
   overflow-y: auto;
   scrollbar-width: none;
-  background: linear-gradient(170deg, #1a0e06 0%, #0d0804 100%);
-  border: 1px solid rgba(255, 143, 0, 0.2);
-  border-radius: 20px;
-  padding: 20px 22px 24px;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255, 100, 0, 0.06) 0%, transparent 60%),
+    linear-gradient(175deg, #1C0F06 0%, #0E0804 50%, #0A0604 100%);
+  border: 1px solid rgba(255, 143, 0, 0.15);
+  border-radius: 24px;
+  padding: 24px 24px 28px;
   box-shadow:
-    0 0 40px rgba(255, 100, 0, 0.12),
-    0 20px 60px rgba(0, 0, 0, 0.5);
-  animation: settings-slide-up 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+    0 0 60px rgba(255, 80, 0, 0.08),
+    0 24px 80px rgba(0, 0, 0, 0.6);
+  animation: settings-slide-up 0.4s var(--ease-spring) both;
 }
 
 @keyframes settings-slide-up {
   from {
     opacity: 0;
-    transform: translateY(24px) scale(0.96);
+    transform: translateY(32px) scale(0.94);
   }
   to {
     opacity: 1;
@@ -566,131 +602,147 @@ body,
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .settings-title {
   font-family: var(--font-jp);
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
-  color: var(--color-fire-bright);
-  letter-spacing: 0.06em;
+  color: var(--ember-gold);
+  letter-spacing: 0.08em;
 }
 
 .settings-close {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border: none;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 200, 140, 0.6);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 200, 140, 0.5);
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background 0.15s, color 0.15s, transform 0.15s;
   -webkit-tap-highlight-color: transparent;
 }
 
 .settings-close:active {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 200, 140, 0.8);
+  transform: scale(0.9);
 }
 
 /* プレビュー */
 .settings-preview {
   display: flex;
   justify-content: center;
-  margin-bottom: 18px;
-  padding: 12px 0;
-  background: rgba(255, 100, 0, 0.05);
-  border-radius: 14px;
-  border: 1px solid rgba(255, 143, 0, 0.08);
+  margin-bottom: 22px;
+  padding: 18px 0;
+  background:
+    radial-gradient(circle at 50% 70%, rgba(255, 120, 0, 0.08) 0%, transparent 70%),
+    rgba(255, 80, 0, 0.03);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 143, 0, 0.06);
 }
 
-/* ラベル */
+/* セクションラベル */
 .settings-label {
   display: block;
   font-family: var(--font-jp);
   font-size: 11px;
-  font-weight: 600;
-  color: rgba(255, 180, 120, 0.6);
-  letter-spacing: 0.08em;
-  margin-bottom: 6px;
-  margin-top: 14px;
+  font-weight: 700;
+  color: rgba(255, 180, 120, 0.5);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  margin-top: 18px;
+}
+
+.settings-label:first-of-type {
+  margin-top: 0;
 }
 
 /* 名前入力 */
 .settings-name-input {
   width: 100%;
-  height: 40px;
-  padding: 0 14px;
-  border: 1px solid rgba(255, 143, 0, 0.2);
-  border-radius: 10px;
-  background: rgba(25, 12, 4, 0.8);
-  color: rgba(255, 230, 200, 0.95);
+  height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  background: rgba(20, 10, 4, 0.8);
+  color: var(--ember-cream);
   font-family: var(--font-jp);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 500;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.25s, box-shadow 0.25s;
 }
 
 .settings-name-input:focus {
-  border-color: rgba(255, 160, 40, 0.5);
-  box-shadow: 0 0 12px rgba(255, 120, 0, 0.12);
+  border-color: var(--glass-border-focus);
+  box-shadow: 0 0 16px rgba(255, 120, 0, 0.1);
 }
 
-/* カラーピッカー */
+/* カラースウォッチ */
 .settings-swatches {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
 .settings-swatch {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  border: 2px solid transparent;
+  border: 2.5px solid transparent;
   cursor: pointer;
-  transition: transform 0.12s, border-color 0.15s, box-shadow 0.15s;
+  transition: transform 0.15s var(--ease-spring), border-color 0.2s, box-shadow 0.2s;
   -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .settings-swatch:active {
-  transform: scale(0.9);
+  transform: scale(0.88);
 }
 
 .settings-swatch.active {
-  border-color: var(--color-fire-bright);
-  box-shadow: 0 0 10px rgba(255, 213, 79, 0.4);
-  transform: scale(1.1);
+  border-color: var(--ember-gold);
+  box-shadow:
+    0 0 0 2px rgba(255, 213, 79, 0.25),
+    0 0 14px rgba(255, 213, 79, 0.3);
+  transform: scale(1.12);
 }
 
 /* 保存ボタン */
 .settings-save-btn {
   display: block;
   width: 100%;
-  margin-top: 22px;
-  padding: 13px 0;
+  margin-top: 26px;
+  padding: 14px 0;
   border: none;
   border-radius: var(--radius-pill);
   cursor: pointer;
   font-family: var(--font-jp);
   font-size: 16px;
   font-weight: 700;
-  letter-spacing: 0.06em;
-  color: #1a0800;
-  background: linear-gradient(135deg, #FFD54F 0%, #FF8F00 50%, #E64A19 100%);
+  letter-spacing: 0.08em;
+  color: var(--ember-coal);
+  background: linear-gradient(135deg, #FFE082 0%, #FFB300 40%, #FF8F00 70%, #E65100 100%);
   box-shadow:
-    0 0 16px rgba(255, 143, 0, 0.4),
-    0 4px 20px rgba(255, 100, 0, 0.25);
-  transition: transform 0.12s;
+    0 0 20px rgba(255, 143, 0, 0.35),
+    0 4px 24px rgba(255, 87, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: transform 0.12s var(--ease-spring), box-shadow 0.15s;
   -webkit-tap-highlight-color: transparent;
 }
 
 .settings-save-btn:active {
   transform: scale(0.96);
+  box-shadow:
+    0 0 10px rgba(255, 143, 0, 0.3),
+    0 2px 12px rgba(255, 87, 0, 0.15);
 }
 
 /* ---------- スクロールバー非表示 ---------- */

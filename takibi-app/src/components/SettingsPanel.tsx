@@ -56,32 +56,29 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ user, onSave, onClose }) 
     return (
         <div className="settings-overlay" onClick={onClose}>
             <div className="settings-panel" onClick={(e) => e.stopPropagation()}>
-                {/* ヘッダー */}
                 <div className="settings-header">
-                    <span className="settings-title">プロフィール設定</span>
+                    <span className="settings-title">プロフィール</span>
                     <button className="settings-close" onClick={onClose} aria-label="閉じる">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
                         </svg>
                     </button>
                 </div>
 
-                {/* アバタープレビュー */}
                 <div className="settings-preview">
-                    <svg width="80" height="80" viewBox="0 0 80 80">
-                        <g transform="translate(40, 40)">
+                    <svg width="96" height="96" viewBox="0 0 96 96">
+                        <g transform="translate(48, 48)">
                             <PixelAvatar
                                 skinColor={skinColor}
                                 hairColor={hairColor}
                                 clothesColor={clothesColor}
-                                size={70}
+                                size={84}
                                 patternIndex={patternIndex}
                             />
                         </g>
                     </svg>
                 </div>
 
-                {/* 名前 */}
                 <label className="settings-label">なまえ</label>
                 <input
                     className="settings-name-input"
@@ -92,7 +89,6 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ user, onSave, onClose }) 
                     autoComplete="off"
                 />
 
-                {/* 肌色 */}
                 <label className="settings-label">はだの色</label>
                 <div className="settings-swatches">
                     {SKIN_COLORS.map((c) => (
@@ -106,7 +102,6 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ user, onSave, onClose }) 
                     ))}
                 </div>
 
-                {/* 髪色 */}
                 <label className="settings-label">かみの色</label>
                 <div className="settings-swatches">
                     {HAIR_COLORS.map((c) => (
@@ -120,7 +115,6 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ user, onSave, onClose }) 
                     ))}
                 </div>
 
-                {/* 服色 */}
                 <label className="settings-label">ふくの色</label>
                 <div className="settings-swatches">
                     {CLOTHES_COLORS.map((c) => (
@@ -134,7 +128,6 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ user, onSave, onClose }) 
                     ))}
                 </div>
 
-                {/* 保存 */}
                 <button className="settings-save-btn" onClick={handleSave}>
                     できた！
                 </button>

@@ -5,14 +5,11 @@ interface JoinButtonProps {
     hasJoined: boolean;
 }
 
-/**
- * 「焚き火を囲む」参加ボタン
- */
 const JoinButton: React.FC<JoinButtonProps> = ({ onClick, hasJoined }) => {
     if (hasJoined) {
         return (
             <div id="join-status" className="join-status">
-                🔥 焚き火を囲んでいます
+                焚き火を囲んでいます
             </div>
         );
     }

@@ -5,9 +5,6 @@ interface OnlineCounterProps {
     isConnected: boolean;
 }
 
-/**
- * 右上のリアルタイムアクセス数表示
- */
 const OnlineCounter: React.FC<OnlineCounterProps> = ({ count, isConnected }) => {
     const prevCountRef = useRef(count);
     const [bump, setBump] = React.useState(false);
@@ -15,15 +12,18 @@ const OnlineCounter: React.FC<OnlineCounterProps> = ({ count, isConnected }) => 
     useEffect(() => {
         if (count !== prevCountRef.current) {
             setBump(true);
-            const t = setTimeout(() => setBump(false), 400);
+            const t = setTimeout(() => setBump(false), 450);
             prevCountRef.current = count;
             return () => clearTimeout(t);
         }
     }, [count]);
 
     return (
-        <div id="online-counter" className={`online-counter${bump ? ' bump' : ''}`}>
-            <span className="counter-dot" aria-label={isConnected ? '接続中' : '接続待ち'} />
+        <div
+            id="online-counter"
+            className={`online-counter${bump ? ' bump' : ''}`}
+        >
+            {isConnected && <span className="counter-dot" aria-label="接続中" />}
             <span className="counter-flame-icon">🔥</span>
             <span className="counter-number">{count.toLocaleString()}</span>
             <span className="counter-label">人が囲んでいる</span>

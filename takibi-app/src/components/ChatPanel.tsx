@@ -16,9 +16,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
 }) => {
     const [input, setInput] = useState('');
     const scrollRef = useRef<HTMLDivElement>(null);
-    const inputRef = useRef<HTMLInputElement>(null);
 
-    // 新着メッセージで自動スクロール
     useEffect(() => {
         const el = scrollRef.current;
         if (el) {
@@ -37,7 +35,6 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
 
     return (
         <div className="chat-panel">
-            {/* メッセージ一覧 */}
             <div className="chat-messages" ref={scrollRef}>
                 {messages.map((msg) => {
                     const isSelf = msg.userId === currentUserId;
@@ -60,15 +57,13 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 })}
             </div>
 
-            {/* 入力欄 */}
             <form className="chat-input-form" onSubmit={handleSubmit}>
                 <input
-                    ref={inputRef}
                     className="chat-input"
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="メッセージを送る..."
+                    placeholder="ささやく..."
                     maxLength={200}
                     autoComplete="off"
                 />
