@@ -123,21 +123,29 @@ function App() {
 
       {/* ===== 星空エフェクト (背景にCSSアニメ) ===== */}
       <div className="stars" aria-hidden="true">
-        {Array.from({ length: 60 }).map((_, i) => (
-          <span
-            key={i}
-            className="star"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 65}%`,
-              animationDelay: `${Math.random() * 4}s`,
-              animationDuration: `${2 + Math.random() * 3}s`,
-              width: `${1 + Math.random() * 2}px`,
-              height: `${1 + Math.random() * 2}px`,
-            }}
-          />
-        ))}
+        {Array.from({ length: 120 }).map((_, i) => {
+          const size = 0.8 + Math.random() * 1.4;
+          // 30%の星を「bright（十字光条あり）」にする
+          const isBright = Math.random() < 0.3;
+          // 上部38%に集中（2乗で上ほど密集）
+          const topRatio = Math.pow(Math.random(), 2.0) * 38;
+          return (
+            <span
+              key={i}
+              className={`star${isBright ? ' bright' : ''}`}
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${topRatio}%`,
+                animationDelay: `${Math.random() * 7}s`,
+                animationDuration: `${1.5 + Math.random() * 4}s`,
+                width: `${size}px`,
+                height: `${size}px`,
+              }}
+            />
+          );
+        })}
       </div>
+
     </div>
   );
 }

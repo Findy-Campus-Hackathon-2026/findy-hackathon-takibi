@@ -52,24 +52,37 @@ body,
   position: relative;
   width: 100%;
   height: var(--app-h);
-  max-width: var(--app-max-w);
-  margin: 0 auto;
+  /* max-width なし → PC でも全画面に広がる */
   overflow: hidden;
   background: linear-gradient(180deg,
-      #060614 0%,
-      #0a0820 30%,
-      #100a28 55%,
-      #150a00 85%,
-      #0d0600 100%);
+      #0a1628 0%,
+      /* 深い夜の青（上空） */
+      #0d1a35 12%,
+      /* 夜の青 */
+      #100e2e 28%,
+      /* 青紫への移行 */
+      #0f0a28 45%,
+      /* 紫みの暗さ */
+      #130a10 65%,
+      /* 暗い紫 */
+      #150a00 84%,
+      /* 地面付近の暗い茶 */
+      #0d0600 100%
+      /* 地面 */
+    );
 }
 
+
 /* ---------- SVGキャンバス ---------- */
+/* スマホ: 全画面 / PC: 中央にスマホ幅で配置し、両脇は夜空が素通し */
 .scene-canvas {
   position: absolute;
   top: 0;
-  left: 0;
-  width: 100%;
+  left: 50%;
+  transform: translateX(-50%);
   height: 100%;
+  /* PC時の最大幅を制限してスマホ比率を維持 */
+  width: min(100%, 480px);
   z-index: 1;
 }
 
@@ -81,24 +94,74 @@ body,
   pointer-events: none;
 }
 
+/* ベースの星 (小さい白い点 + 淡いグロー) */
 .star {
   position: absolute;
   border-radius: 50%;
-  background: white;
+  background: #ffffff;
+  box-shadow:
+    0 0 2px 1px rgba(255, 255, 255, 0.95),
+    0 0 6px 2px rgba(255, 255, 255, 0.4),
+    0 0 12px 3px rgba(200, 220, 255, 0.15);
   animation: twinkle ease-in-out infinite;
+}
+
+/* 明るい星 (強いグロー + 十字光条) */
+.star.bright {
+  background: #ffffff;
+  box-shadow:
+    0 0 3px 2px rgba(255, 255, 255, 1),
+    0 0 10px 4px rgba(255, 255, 255, 0.7),
+    0 0 22px 6px rgba(200, 220, 255, 0.35),
+    0 0 40px 8px rgba(180, 200, 255, 0.15);
+}
+
+/* 十字光条（明るい星の前後に細い線を張る） */
+.star.bright::before,
+.star.bright::after {
+  content: '';
+  position: absolute;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 2px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: inherit;
+}
+
+/* 縦線 */
+.star.bright::before {
+  width: 1px;
+  height: 10px;
+}
+
+/* 横線 */
+.star.bright::after {
+  width: 10px;
+  height: 1px;
 }
 
 @keyframes twinkle {
 
   0%,
   100% {
-    opacity: 0.2;
-    transform: scale(1);
+    opacity: 0.08;
+    transform: scale(0.7);
+  }
+
+  45% {
+    opacity: 0.7;
+    transform: scale(1.0);
   }
 
   50% {
     opacity: 1;
-    transform: scale(1.5);
+    transform: scale(1.25);
+  }
+
+  55% {
+    opacity: 0.7;
+    transform: scale(1.0);
   }
 }
 
@@ -184,8 +247,10 @@ body,
 .bottom-ui {
   position: absolute;
   bottom: 0;
-  left: 0;
-  right: 0;
+  /* SVGシーンと同じ中央配置 */
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(100%, 480px);
   z-index: 10;
   display: flex;
   flex-direction: column;
@@ -195,6 +260,7 @@ body,
       rgba(6, 6, 20, 0.95) 0%,
       rgba(6, 6, 20, 0.6) 60%,
       transparent 100%);
+
 }
 
 /* ---------- 参加ボタン ---------- */
