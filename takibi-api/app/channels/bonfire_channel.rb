@@ -1,7 +1,14 @@
 class BonfireChannel < ApplicationCable::Channel
   def subscribed
     stream_from "bonfire"
+
+    # 接続した瞬間に、現在焚き火にいる全ユーザー一覧を送る（まだ参加していなくても視覚的に見えるように）
+    # 本人IDは nil で送る（join後に正式なIDが付与される）
+    manager = BonfireSessionManager.instance
+    transmit({ type: "welcome", userId: nil, users: manager.all_users })
+    transmit({ type: "count_update", count: manager.count })
   end
+
 
   def unsubscribed
     leave
