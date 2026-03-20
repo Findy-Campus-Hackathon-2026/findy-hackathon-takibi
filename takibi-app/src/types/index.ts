@@ -42,6 +42,18 @@ export interface FlameParticle {
 }
 
 /**
+ * チャットメッセージ
+ */
+export interface ChatMessage {
+    id: string;
+    userId: string;
+    userName: string;
+    avatarColor: string;
+    body: string;
+    timestamp: number;
+}
+
+/**
  * アプリ全体の状態
  */
 export interface AppState {
@@ -49,4 +61,5 @@ export interface AppState {
     currentUserId: string | null;
     onlineCount: number;
     isConnected: boolean;
+    messages: ChatMessage[];
 }

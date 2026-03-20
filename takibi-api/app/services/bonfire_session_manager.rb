@@ -45,6 +45,17 @@ class BonfireSessionManager
     recalculate_positions!
   end
 
+  def update_user(user_id, attrs)
+    data = @users[user_id]
+    return nil unless data
+
+    allowed = %i[name skinColor hairColor avatarColor]
+    updates = attrs.slice(*allowed).reject { |_, v| v.nil? }
+    return data if updates.empty?
+
+    @users[user_id] = data.merge(updates)
+  end
+
   def user(user_id)
     @users[user_id]
   end

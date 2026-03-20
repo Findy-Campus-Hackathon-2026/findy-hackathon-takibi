@@ -1,8 +1,10 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import Bonfire from './components/Bonfire';
 import UserAvatar from './components/UserAvatar';
 import OnlineCounter from './components/OnlineCounter';
 import JoinButton from './components/JoinButton';
+import ChatPanel from './components/ChatPanel';
+import SettingsPanel from './components/SettingsPanel';
 import { useUsers, calcUserAngle } from './hooks/useUsers';
 import type { User } from './types';
 import './App.css';
@@ -17,7 +19,8 @@ const CENTER_Y = VIEWPORT_H / 2 - 40;
  * メインアプリコンポーネント
  */
 function App() {
-  const { users, currentUserId, onlineCount, isConnected, addSelf } = useUsers();
+  const { users, currentUserId, onlineCount, isConnected, messages, addSelf, sendMessage, updateProfile } = useUsers();
+  const [showSettings, setShowSettings] = useState(false);
 
   // ユーザーをきれいに円形配置するための角度再計算
   const positionedUsers: User[] = useMemo(() => {
@@ -28,11 +31,38 @@ function App() {
   }, [users]);
 
   const hasJoined = currentUserId !== null;
+  const currentUser = useMemo(
+    () => positionedUsers.find((u) => u.id === currentUserId),
+    [positionedUsers, currentUserId],
+  );
 
   return (
     <div id="app-root" className="app-root" aria-label="焚き火を囲もう">
       {/* ===== 右上カウンター ===== */}
       <OnlineCounter count={onlineCount} isConnected={isConnected} />
+
+      {/* ===== 左上 設定ボタン ===== */}
+      {hasJoined && (
+        <button
+          className="settings-btn"
+          onClick={() => setShowSettings(true)}
+          aria-label="設定"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="currentColor" strokeWidth="1.8" />
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" stroke="currentColor" strokeWidth="1.8" />
+          </svg>
+        </button>
+      )}
+
+      {/* ===== 設定パネル ===== */}
+      {showSettings && currentUser && (
+        <SettingsPanel
+          user={currentUser}
+          onSave={updateProfile}
+          onClose={() => setShowSettings(false)}
+        />
+      )}
 
       {/* ===== メインSVGキャンバス ===== */}
       <svg
@@ -116,10 +146,20 @@ function App() {
         <Bonfire cx={CENTER_X} cy={CENTER_Y} />
       </svg>
 
+      {/* ===== チャットパネル ===== */}
+      <ChatPanel
+        messages={messages}
+        currentUserId={currentUserId}
+        onSend={sendMessage}
+        hasJoined={hasJoined}
+      />
+
       {/* ===== 下部の参加UI ===== */}
-      <div id="bottom-ui" className="bottom-ui">
-        <JoinButton onClick={addSelf} hasJoined={hasJoined} />
-      </div>
+      {!hasJoined && (
+        <div id="bottom-ui" className="bottom-ui">
+          <JoinButton onClick={addSelf} hasJoined={hasJoined} />
+        </div>
+      )}
 
       {/* ===== 星空エフェクト (背景にCSSアニメ) ===== */}
       <div className="stars" aria-hidden="true">

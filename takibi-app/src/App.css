@@ -348,6 +348,351 @@ body,
   }
 }
 
+/* ---------- チャットパネル ---------- */
+.chat-panel {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(100%, 480px);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+}
+
+.chat-messages {
+  flex: 1;
+  max-height: 220px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 16px 8px;
+  mask-image: linear-gradient(to bottom, transparent 0%, black 25%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 25%);
+  pointer-events: auto;
+  scrollbar-width: none;
+}
+
+.chat-msg {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 75%;
+  animation: msg-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.chat-msg--self {
+  align-self: flex-end;
+}
+
+@keyframes msg-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.chat-msg-name {
+  font-family: var(--font-jp);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding-left: 10px;
+  opacity: 0.85;
+}
+
+.chat-msg-body {
+  font-family: var(--font-jp);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: rgba(255, 235, 210, 0.95);
+  background: rgba(45, 20, 5, 0.7);
+  border: 1px solid rgba(255, 143, 0, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 14px;
+  padding: 7px 13px;
+  word-break: break-word;
+}
+
+.chat-msg--self .chat-msg-body {
+  background: rgba(255, 120, 0, 0.18);
+  border-color: rgba(255, 180, 80, 0.25);
+}
+
+/* ---------- チャット入力 ---------- */
+.chat-input-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px 36px;
+  background: linear-gradient(to top,
+    rgba(6, 6, 20, 0.95) 0%,
+    rgba(6, 6, 20, 0.6) 70%,
+    transparent 100%);
+  pointer-events: auto;
+}
+
+.chat-input {
+  flex: 1;
+  height: 40px;
+  padding: 0 16px;
+  border: 1px solid rgba(255, 143, 0, 0.2);
+  border-radius: var(--radius-pill);
+  background: rgba(25, 12, 4, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: rgba(255, 230, 200, 0.95);
+  font-family: var(--font-jp);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.chat-input::placeholder {
+  color: rgba(255, 180, 120, 0.35);
+}
+
+.chat-input:focus {
+  border-color: rgba(255, 160, 40, 0.5);
+  box-shadow: 0 0 16px rgba(255, 120, 0, 0.15);
+}
+
+.chat-send-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FF8F00, #E64A19);
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.12s, opacity 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.chat-send-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.chat-send-btn:not(:disabled):active {
+  transform: scale(0.9);
+}
+
+/* ---------- 設定ボタン (左上) ---------- */
+.settings-btn {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255, 143, 0, 0.25);
+  border-radius: 50%;
+  background: rgba(10, 5, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: rgba(255, 200, 140, 0.7);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.settings-btn:active {
+  color: var(--color-fire-bright);
+  border-color: rgba(255, 180, 60, 0.5);
+}
+
+/* ---------- 設定パネル ---------- */
+.settings-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: settings-fade-in 0.25s ease both;
+}
+
+@keyframes settings-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.settings-panel {
+  width: min(340px, calc(100% - 40px));
+  max-height: calc(100dvh - 80px);
+  overflow-y: auto;
+  scrollbar-width: none;
+  background: linear-gradient(170deg, #1a0e06 0%, #0d0804 100%);
+  border: 1px solid rgba(255, 143, 0, 0.2);
+  border-radius: 20px;
+  padding: 20px 22px 24px;
+  box-shadow:
+    0 0 40px rgba(255, 100, 0, 0.12),
+    0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: settings-slide-up 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes settings-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.settings-title {
+  font-family: var(--font-jp);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-fire-bright);
+  letter-spacing: 0.06em;
+}
+
+.settings-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 200, 140, 0.6);
+  cursor: pointer;
+  transition: background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.settings-close:active {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* プレビュー */
+.settings-preview {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 18px;
+  padding: 12px 0;
+  background: rgba(255, 100, 0, 0.05);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 143, 0, 0.08);
+}
+
+/* ラベル */
+.settings-label {
+  display: block;
+  font-family: var(--font-jp);
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 180, 120, 0.6);
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+  margin-top: 14px;
+}
+
+/* 名前入力 */
+.settings-name-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 143, 0, 0.2);
+  border-radius: 10px;
+  background: rgba(25, 12, 4, 0.8);
+  color: rgba(255, 230, 200, 0.95);
+  font-family: var(--font-jp);
+  font-size: 15px;
+  font-weight: 500;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.settings-name-input:focus {
+  border-color: rgba(255, 160, 40, 0.5);
+  box-shadow: 0 0 12px rgba(255, 120, 0, 0.12);
+}
+
+/* カラーピッカー */
+.settings-swatches {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.settings-swatch {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.12s, border-color 0.15s, box-shadow 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.settings-swatch:active {
+  transform: scale(0.9);
+}
+
+.settings-swatch.active {
+  border-color: var(--color-fire-bright);
+  box-shadow: 0 0 10px rgba(255, 213, 79, 0.4);
+  transform: scale(1.1);
+}
+
+/* 保存ボタン */
+.settings-save-btn {
+  display: block;
+  width: 100%;
+  margin-top: 22px;
+  padding: 13px 0;
+  border: none;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  font-family: var(--font-jp);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #1a0800;
+  background: linear-gradient(135deg, #FFD54F 0%, #FF8F00 50%, #E64A19 100%);
+  box-shadow:
+    0 0 16px rgba(255, 143, 0, 0.4),
+    0 4px 20px rgba(255, 100, 0, 0.25);
+  transition: transform 0.12s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.settings-save-btn:active {
+  transform: scale(0.96);
+}
+
 /* ---------- スクロールバー非表示 ---------- */
 ::-webkit-scrollbar {
   display: none;

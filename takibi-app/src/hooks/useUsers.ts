@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { createConsumer } from '@rails/actioncable';
-import type { User, AppState } from '../types';
+import type { User, ChatMessage, AppState } from '../types';
 
 const CABLE_URL = 'ws://localhost:3000/cable';
+const MAX_MESSAGES = 50;
 
 /**
  * ユーザーを円形に均等配置する角度を計算
@@ -11,14 +12,24 @@ export function calcUserAngle(index: number, total: number): number {
     return (360 / total) * index;
 }
 
+export interface ProfileUpdate {
+    name?: string;
+    skinColor?: string;
+    hairColor?: string;
+    avatarColor?: string;
+}
+
 export function useUsers(): AppState & {
     addSelf: () => void;
+    sendMessage: (body: string) => void;
+    updateProfile: (attrs: ProfileUpdate) => void;
 } {
     const [state, setState] = useState<AppState>({
         users: [],
         currentUserId: null,
         onlineCount: 0,
         isConnected: false,
+        messages: [],
     });
 
 
@@ -69,6 +80,26 @@ export function useUsers(): AppState & {
                             onlineCount: data.count as number,
                         }));
                         break;
+
+                    case 'user_updated': {
+                        const updated = data.user as User;
+                        setState((prev) => ({
+                            ...prev,
+                            users: prev.users.map((u) =>
+                                u.id === updated.id ? { ...u, ...updated } : u,
+                            ),
+                        }));
+                        break;
+                    }
+
+                    case 'chat': {
+                        const msg = data.message as ChatMessage;
+                        setState((prev) => ({
+                            ...prev,
+                            messages: [...prev.messages.slice(-MAX_MESSAGES + 1), msg],
+                        }));
+                        break;
+                    }
                 }
             },
         });
@@ -86,5 +117,16 @@ export function useUsers(): AppState & {
         channelRef.current?.perform('join', {});
     }, [state.currentUserId]);
 
-    return { ...state, addSelf };
+    const sendMessage = useCallback((body: string) => {
+        const trimmed = body.trim();
+        if (!trimmed || !state.currentUserId) return;
+        channelRef.current?.perform('chat', { body: trimmed });
+    }, [state.currentUserId]);
+
+    const updateProfile = useCallback((attrs: ProfileUpdate) => {
+        if (!state.currentUserId) return;
+        channelRef.current?.perform('update_profile', attrs);
+    }, [state.currentUserId]);
+
+    return { ...state, addSelf, sendMessage, updateProfile };
 }

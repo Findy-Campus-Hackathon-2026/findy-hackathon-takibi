@@ -20,6 +20,41 @@ class BonfireChannel < ApplicationCable::Channel
     ActionCable.server.broadcast("bonfire", { type: "count_update", count: manager.count })
   end
 
+  def update_profile(data)
+    manager = BonfireSessionManager.instance
+    attrs = {
+      name: (data["name"] || data[:name]).presence,
+      skinColor: (data["skinColor"] || data[:skinColor]).presence,
+      hairColor: (data["hairColor"] || data[:hairColor]).presence,
+      avatarColor: (data["avatarColor"] || data[:avatarColor]).presence
+    }.compact
+
+    updated = manager.update_user(anonymous_id, attrs)
+    return unless updated
+
+    ActionCable.server.broadcast("bonfire", { type: "user_updated", user: updated })
+  end
+
+  def chat(data)
+    manager = BonfireSessionManager.instance
+    user = manager.user(anonymous_id)
+    return unless user
+
+    body = (data["body"] || data[:body]).to_s.strip
+    return if body.empty? || body.length > 200
+
+    message = {
+      id: SecureRandom.uuid,
+      userId: anonymous_id,
+      userName: user[:name],
+      avatarColor: user[:avatarColor],
+      body: body,
+      timestamp: (Time.current.to_f * 1000).to_i
+    }
+
+    ActionCable.server.broadcast("bonfire", { type: "chat", message: message })
+  end
+
   def leave(_data = {})
     manager = BonfireSessionManager.instance
     manager.remove_user(anonymous_id)
