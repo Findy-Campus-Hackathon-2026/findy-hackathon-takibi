@@ -3,6 +3,8 @@ require "concurrent"
 class BonfireSessionManager
   AVATAR_EMOJIS = %w[🧑 👩 👨 🧔 👧 🧒 🧕 🧑‍💻 👩‍💻 👨‍🍳].freeze
   AVATAR_COLORS = %w[#FF6B6B #FFD93D #6BCB77 #4D96FF #C77DFF #FF9A3C #00C9A7 #F72585].freeze
+  SKIN_COLORS = %w[#FDDCB5 #F5C49C #E8A87C #D08B5B #A0674B #6B4226].freeze
+  HAIR_COLORS = %w[#2C2C2C #6B3A2A #C68642 #F2D16B #C94C4C #E8E8E8].freeze
   ANONYMOUS_NAMES = %w[
     たびびと かくれんぼ ほたる かぜ つき
     ほし もり かわ やま そら
@@ -29,6 +31,8 @@ class BonfireSessionManager
       avatarColor: AVATAR_COLORS.sample,
       avatarEmoji: AVATAR_EMOJIS.sample,
       avatarImageUrl: nil,
+      skinColor: SKIN_COLORS.sample,
+      hairColor: HAIR_COLORS.sample,
       joinedAt: (Time.current.to_f * 1000).to_i
     }
     @users[user_id] = user_data

@@ -20,6 +20,10 @@ export interface User {
      * - バックエンドから個別ユーザー画像を受け取る際にセットする
      */
     avatarImageUrl?: string | null;
+    /** ドット絵アバターの肌色（バックエンドから割り当て） */
+    skinColor?: string;
+    /** ドット絵アバターの髪色（バックエンドから割り当て） */
+    hairColor?: string;
 }
 
 /**

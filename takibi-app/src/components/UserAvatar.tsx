@@ -1,6 +1,8 @@
 import React from 'react';
 import type { User } from '../types';
 import { DEFAULT_AVATAR_IMAGE, AVATAR_IMAGE_SCALE, hasValidImage } from '../config/assetConfig';
+import { SKIN_COLORS, HAIR_COLORS, DOT_PATTERNS } from '../config/avatarPixelConfig';
+import PixelAvatar from './PixelAvatar';
 
 interface UserAvatarProps {
     user: User;
@@ -10,20 +12,16 @@ interface UserAvatarProps {
 }
 
 /**
- * ユーザーアバターコンポーネント
- * 焚き火の周りの円軌道上に配置される
- *
- * ## アバター画像差し替え方法（3通り）
- *
- * ### 方法 A: 全ユーザー共通の画像（グローバル設定）
- *   `src/config/assetConfig.ts` の DEFAULT_AVATAR_IMAGE に画像パスをセット
- *
- * ### 方法 B: ユーザー個別の画像
- *   バックエンドから受け取る User オブジェクトの avatarImageUrl フィールドに画像URLをセット
- *   （個別URLが最優先で表示されます）
- *
- * ### 方法 C: どちらもnull → 絵文字+カラー円のデフォルトにフォールバック
+ * ユーザーID文字列から簡易ハッシュ値を生成
  */
+function simpleHash(str: string): number {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = (hash * 31 + str.charCodeAt(i)) | 0;
+    }
+    return Math.abs(hash);
+}
+
 const UserAvatar: React.FC<UserAvatarProps> = ({
     user,
     centerX,
@@ -38,7 +36,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
     const GLOW_SIZE = AVATAR_SIZE + 8;
 
     // ---------------------------------------------------
-    // 優先度: user.avatarImageUrl > DEFAULT_AVATAR_IMAGE > 絵文字
+    // 優先度: user.avatarImageUrl > DEFAULT_AVATAR_IMAGE > ドット絵
     // ---------------------------------------------------
     const resolvedAvatarImage =
         hasValidImage(user.avatarImageUrl) ? user.avatarImageUrl
@@ -47,8 +45,17 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
 
     const useImage = resolvedAvatarImage !== null;
     const imgSize = AVATAR_SIZE * AVATAR_IMAGE_SCALE;
-    // clipPath用ID（SVGはグローバルスコープなのでユーザーIDで一意にする）
     const clipId = `avatar-clip-${user.id}`;
+
+    // ドット絵用カラー（サーバーから来なければIDからハッシュ決定）
+    const hash = simpleHash(user.id);
+    const skinColor = user.skinColor || SKIN_COLORS[hash % SKIN_COLORS.length];
+    const hairColor = user.hairColor || HAIR_COLORS[(hash >> 4) % HAIR_COLORS.length];
+    const clothesColor = user.avatarColor;
+    const patternIndex = (hash >> 8) % DOT_PATTERNS.length;
+
+    // ドット絵の表示サイズ
+    const pixelAvatarSize = AVATAR_SIZE * 2;
 
     return (
         <g
@@ -107,26 +114,14 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
                     />
                 </>
             ) : (
-                /* ===== 絵文字アバターモード（デフォルト） ===== */
-                <>
-                    {/* アバター背景円 */}
-                    <circle
-                        r={AVATAR_SIZE}
-                        fill={user.avatarColor}
-                        opacity={0.9}
-                        stroke={isSelf ? '#FFF9C4' : 'rgba(255,255,255,0.3)'}
-                        strokeWidth={isSelf ? 2.5 : 1}
-                    />
-                    {/* 絵文字 */}
-                    <text
-                        textAnchor="middle"
-                        dominantBaseline="central"
-                        fontSize={AVATAR_SIZE * 1.0}
-                        style={{ userSelect: 'none' }}
-                    >
-                        {user.avatarEmoji}
-                    </text>
-                </>
+                /* ===== ドット絵アバターモード ===== */
+                <PixelAvatar
+                    skinColor={skinColor}
+                    hairColor={hairColor}
+                    clothesColor={clothesColor}
+                    size={pixelAvatarSize}
+                    patternIndex={patternIndex}
+                />
             )}
 
             {/* ===== 名前ラベル ===== */}
