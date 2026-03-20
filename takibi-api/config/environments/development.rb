@@ -3,6 +3,10 @@ require "active_support/core_ext/integer/time"
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+  # ngrok / スマホなど外部ホストからのアクセスを許可（開発環境のみ）
+  # 本番では絶対に使わないこと
+  config.hosts.clear
+
   # Make code changes take effect immediately without server restart.
   config.enable_reloading = true
 
@@ -50,11 +54,7 @@ Rails.application.configure do
   # Annotate rendered view with file names.
   config.action_view.annotate_rendered_view_with_filenames = true
 
-  # Allow Action Cable access from frontend dev server
-  config.action_cable.allowed_request_origins = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173"
-  ]
+  # ActionCable: ngrok / スマホ含め全オリジンを許可（開発環境のみ）
   config.action_cable.disable_request_forgery_protection = true
 
   # Raise error when a before_action's only/except options reference missing actions.

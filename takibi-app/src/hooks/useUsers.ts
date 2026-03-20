@@ -2,7 +2,11 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { createConsumer } from '@rails/actioncable';
 import type { User, ChatMessage, AppState } from '../types';
 
-const CABLE_URL = 'ws://localhost:3000/cable';
+// Viteプロキシ(vite.config.ts)が /cable をRails(3000)に橋渡しする。
+// → 常に「今いるオリジンの /cable」に繋ぐだけでOK。
+// localhost / ngrok / スマホ、どこからでも自動的にRailsへ届く。
+const wsProto = window.location.protocol === 'https:' ? 'wss' : 'ws';
+const CABLE_URL = `${wsProto}://${window.location.host}/cable`;
 const MAX_MESSAGES = 50;
 
 /**
