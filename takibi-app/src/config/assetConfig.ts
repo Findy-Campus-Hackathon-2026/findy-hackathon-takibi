@@ -22,9 +22,9 @@ import takibi03 from '../assets/bonfire/takibi03.png';
  * - 空配列  → SVGコードで描画したパーティクル炎にフォールバック
  */
 export const BONFIRE_FRAMES: string[] = [
-    takibi01,
-    takibi02,
-    takibi03,
+	takibi01,
+	takibi02,
+	takibi03,
 ];
 
 /**
@@ -38,8 +38,8 @@ export const BONFIRE_FRAME_INTERVAL_MS = 350;
  * 画像を使う場合のみ有効。SVG描画時は無視されます。
  */
 export const BONFIRE_IMAGE_SIZE = {
-    width: 120,
-    height: 150,
+	width: 120,
+	height: 150,
 } as const;
 
 // ------------------------------------------------------------
@@ -66,5 +66,5 @@ export const AVATAR_IMAGE_SCALE = 2.0;
  * 画像が有効かどうかを判定するユーティリティ
  */
 export function hasValidImage(src: string | null | undefined): src is string {
-    return typeof src === 'string' && src.trim().length > 0;
+	return typeof src === 'string' && src.trim().length > 0;
 }
