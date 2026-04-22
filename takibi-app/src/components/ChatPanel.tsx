@@ -1,76 +1,37 @@
-import React, { useState, useRef, useEffect } from 'react';
-import type { ChatMessage } from '../types';
+import React from 'react';
 
 interface ChatPanelProps {
-    messages: ChatMessage[];
+    messages: any[]; // 使用しない
     currentUserId: string | null;
     onSend: (body: string) => void;
     hasJoined: boolean;
 }
 
 const ChatPanel: React.FC<ChatPanelProps> = ({
-    messages,
-    currentUserId,
-    onSend,
     hasJoined,
 }) => {
-    const [input, setInput] = useState('');
-    const scrollRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const el = scrollRef.current;
-        if (el) {
-            el.scrollTop = el.scrollHeight;
-        }
-    }, [messages.length]);
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!input.trim()) return;
-        onSend(input);
-        setInput('');
-    };
-
     if (!hasJoined) return null;
 
     return (
         <div className="chat-panel">
-            <div className="chat-messages" ref={scrollRef}>
-                {messages.map((msg) => {
-                    const isSelf = msg.userId === currentUserId;
-                    return (
-                        <div
-                            key={msg.id}
-                            className={`chat-msg ${isSelf ? 'chat-msg--self' : ''}`}
-                        >
-                            {!isSelf && (
-                                <span
-                                    className="chat-msg-name"
-                                    style={{ color: msg.avatarColor }}
-                                >
-                                    {msg.userName}
-                                </span>
-                            )}
-                            <span className="chat-msg-body">{msg.body}</span>
-                        </div>
-                    );
-                })}
+            <div className="chat-messages">
+                <div className="chat-msg chat-msg--system">
+                    <span className="chat-msg-body">チャット機能は準備中です。焚き火を囲んでリラックスしましょう。</span>
+                </div>
             </div>
 
-            <form className="chat-input-form" onSubmit={handleSubmit}>
+            <div className="chat-input-form">
                 <input
                     className="chat-input"
                     type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    placeholder="ささやく..."
-                    maxLength={200}
-                    autoComplete="off"
+                    value=""
+                    placeholder="準備中..."
+                    disabled
                 />
                 <button
                     className="chat-send-btn"
                     type="submit"
-                    disabled={!input.trim()}
+                    disabled
                     aria-label="送信"
                 >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -83,7 +44,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                         />
                     </svg>
                 </button>
-            </form>
+            </div>
         </div>
     );
 };
