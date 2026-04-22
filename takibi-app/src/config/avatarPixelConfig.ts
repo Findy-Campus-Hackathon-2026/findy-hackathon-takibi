@@ -23,6 +23,12 @@ export const HAIR_COLORS = [
     '#E8E8E8', // 白／シルバー
 ] as const;
 
+/** 服の色パレット */
+export const CLOTHES_COLORS = [
+    '#FF6B6B', '#FFD93D', '#6BCB77', '#4D96FF',
+    '#C77DFF', '#FF9A3C', '#00C9A7', '#F72585',
+] as const;
+
 /** 目の色 */
 export const EYE_COLOR = '#1A1A2E';
 

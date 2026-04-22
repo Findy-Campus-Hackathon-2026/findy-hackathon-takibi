@@ -5,9 +5,13 @@
 // カスタム画像に差し替えたい場合は、このファイルだけ変更すればOKです。
 //
 // 画像の配置場所:
-//   public/images/bonfire/  ← 焚き火画像
+//   src/assets/bonfire/  ← 焚き火画像
 //   public/images/avatars/  ← アバター画像
 // ============================================================
+
+import takibi01 from '../assets/bonfire/takibi01.png';
+import takibi02 from '../assets/bonfire/takibi02.png';
+import takibi03 from '../assets/bonfire/takibi03.png';
 
 /**
  * 焚き火アニメーションフレーム
@@ -18,9 +22,9 @@
  * - 空配列  → SVGコードで描画したパーティクル炎にフォールバック
  */
 export const BONFIRE_FRAMES: string[] = [
-    '/images/bonfire/takibi01.png',
-    '/images/bonfire/takibi02.png',
-    '/images/bonfire/takibi03.png',
+    takibi01,
+    takibi02,
+    takibi03,
 ];
 
 /**

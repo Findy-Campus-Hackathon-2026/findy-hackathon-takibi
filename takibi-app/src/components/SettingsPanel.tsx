@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
 import type { User } from '../types';
 import type { ProfileUpdate } from '../hooks/useUsers';
-import { SKIN_COLORS, HAIR_COLORS, DOT_PATTERNS } from '../config/avatarPixelConfig';
+import { SKIN_COLORS, HAIR_COLORS, DOT_PATTERNS, CLOTHES_COLORS } from '../config/avatarPixelConfig';
 import PixelAvatar from './PixelAvatar';
-
-const CLOTHES_COLORS = [
-    '#FF6B6B', '#FFD93D', '#6BCB77', '#4D96FF',
-    '#C77DFF', '#FF9A3C', '#00C9A7', '#F72585',
-];
 
 interface SettingsPanelProps {
     user: User;
